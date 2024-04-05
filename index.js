@@ -24,18 +24,23 @@ app.get("/api/:date?", function (req, res) {
   let paramDate 
   if(!req.params.date){
     paramDate = new Date()
-  }else{
-    if(isNaN(req.params.date)){
-      paramDate = new Date(req.params.date)
-    }else{
-      paramDate = new Date(parseInt(req.params.date))
-    }
+  }else if (isNaN(req.params.date)) {
+    paramDate = new Date(req.params.date);
+  } else {
+    paramDate = new Date(parseInt(req.params.date));
   }
+  
 
-  res.json({
-    'unix': paramDate.getTime(),
-    'utc': paramDate.toUTCString()
-  });
+  if (isNaN(paramDate.getTime())) {
+    // If the date is invalid, return an error
+    res.json({ 'error': 'Invalid Date' });
+  } else {
+    // If the date is valid, return the Unix timestamp and the UTC string
+    res.json({
+      'unix': paramDate.getTime(),
+      'utc': paramDate.toUTCString()
+    })
+  }
 });
 
 // Listen on port set in environment variable or default to 3000
